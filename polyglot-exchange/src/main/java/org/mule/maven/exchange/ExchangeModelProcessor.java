@@ -45,6 +45,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
 
     private static Logger LOGGER = Logger.getLogger(ExchangeModelProcessor.class.getName());
 
+    private static final String EXCHANGE_MAVEN_PERSIST_POM = "exchange.maven.persistpom";
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
@@ -108,6 +109,11 @@ public class ExchangeModelProcessor implements ModelProcessor {
             final String data = toXmlString(mavenModel);
             FileUtils.fileWrite(temporaryExchangeXml, data);
             mavenModel.setPomFile(temporaryExchangeXml);
+
+            if (Boolean.getBoolean(EXCHANGE_MAVEN_PERSIST_POM)) {
+                final File persistedPomFile = new File(temporaryExchangeXml.getParentFile(), "pom.xml");
+                org.apache.commons.io.FileUtils.copyFile(temporaryExchangeXml, persistedPomFile);
+            }
 
             // done =]
             return mavenModel;

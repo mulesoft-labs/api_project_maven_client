@@ -121,6 +121,9 @@ public class RestConnectPackageMojo extends AbstractMojo {
 
         //verify if rest-connect did do something in the output directory, at least the pom.xml
         if (new File(restConnectOutputDir, "pom.xml").exists()) {
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(String.format("output dir on [%s]", restConnectOutputDir.getAbsolutePath()));
+            }
             getLog().info(String.format("Connector successfully generated, use this dependency for a Mule 4 Application:\n" +
                             "         <dependency>\n" +
                             "            <groupId>%s</groupId>\n" +

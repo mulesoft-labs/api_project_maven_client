@@ -13,6 +13,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <debugIntegrationTests>false</debugIntegrationTests>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -82,6 +86,79 @@
                             <goal>helpmojo</goal>
                         </goals>
                         <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>exec-maven-plugin</artifactId>-->
+                <!--<version>1.6.0</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>integration-test</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>exec</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<configuration>-->
+                    <!--<executable>mvn</executable>-->
+                    <!--&lt;!&ndash; optional &ndash;&gt;-->
+                    <!--&lt;!&ndash;<workingDirectory>/tmp</workingDirectory>&ndash;&gt;-->
+                    <!--<workingDirectory>${project.basedir}/src/it/lautaro_raml</workingDirectory>-->
+                    <!--<arguments>-->
+                        <!--<argument>validate</argument>-->
+                        <!--<argument>package</argument>-->
+                        <!--&lt;!&ndash;<argument>-D=true</argument>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<argument>install</argument>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<argument>myproject:dist</argument>&ndash;&gt;-->
+                        <!--&lt;!&ndash;...&ndash;&gt;-->
+                    <!--</arguments>-->
+                    <!--<systemProperties>-->
+                        <!--<property>-->
+                            <!--<key>exchange.maven.persistpom</key>-->
+                            <!--<value>true</value>-->
+                        <!--</property>-->
+                    <!--</systemProperties>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <projectsDirectory>src/it</projectsDirectory>
+                    <setupIncludes>*/pom.xml</setupIncludes>
+                    <!--<selectorScript>selectorScript</selectorScript>-->
+                    <!--<preBuildHookScript>preBuild</preBuildHookScript>-->
+                    <failIfNoProjects>true</failIfNoProjects>
+                    <postBuildHookScript>verify</postBuildHookScript>
+                    <debug>${debugIntegrationTests}</debug>
+                    <streamLogs>${debugIntegrationTests}</streamLogs>
+                    <!--<showErrors>${debugIntegrationTests}</showErrors>-->
+                    <showErrors>true</showErrors>
+
+                    <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
+                    <cloneProjectsTo>${project.build.directory}/LPM</cloneProjectsTo>
+
+
+                    <!--<setupIncludes>*/exchange.json</setupIncludes>-->
+                    <!--<localRepositoryPath>target/local-repo</localRepositoryPath>-->
+                    <!--<goals>-->
+                        <!--<goal>clean</goal>-->
+                        <!--<goal>install</goal>-->
+                    <!--</goals>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
