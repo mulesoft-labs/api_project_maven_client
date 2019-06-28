@@ -26,6 +26,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--takari polyglot-->
+        <dependency>
+            <groupId>io.takari.polyglot</groupId>
+            <artifactId>polyglot-common</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -2,19 +2,16 @@ package org.mule.maven.exchange.model.processor;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.building.FileModelSource;
-import org.apache.maven.model.building.ModelProcessor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mule.maven.exchange.ExchangeModelProcessor;
+import org.mule.maven.exchange.ExchangeModelConverter;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -24,13 +21,13 @@ import java.util.*;
 import static org.junit.Assert.assertFalse;
 
 @RunWith(Parameterized.class)
-public class ExchangeModelProcessorTest {
+public class ExchangeModelConverterTest {
 
     public static final String EXCHANGE_JSON = "exchange.json";
     public static final String POM_XML = "pom.xml";
     final File testCase;
 
-    public ExchangeModelProcessorTest(String name, File testCase) {
+    public ExchangeModelConverterTest(String name, File testCase) {
         this.testCase = testCase;
     }
 
@@ -40,14 +37,11 @@ public class ExchangeModelProcessorTest {
             if (!testCase.getName().startsWith("groupId")) {
                 System.setProperty("groupId", "org.mule.test");
             }
-            final ExchangeModelProcessor exchangeModelProcessor = new ExchangeModelProcessor();
-            final HashMap<String, Object> options = new HashMap<>();
+            final ExchangeModelConverter exchangeModelReader = new ExchangeModelConverter();
             final File exchangeFile = getExchangeFile(testCase);
-            final FileModelSource fileModelSource = new FileModelSource(exchangeModelProcessor.locatePom(testCase));
-            options.put(ModelProcessor.SOURCE, fileModelSource);
-            final FileInputStream inputStream = new FileInputStream(exchangeFile);
-            final Model read = exchangeModelProcessor.read(inputStream, options);
-            final String result = exchangeModelProcessor.toXmlString(read);
+            final FileReader reader = new FileReader(exchangeFile);
+            final Model read = exchangeModelReader.getModel(exchangeFile.getAbsolutePath(), reader);
+            final String result = exchangeModelReader.toXmlString(read);
             final List<String> xmlLines = Files.readAllLines(getPomFile(testCase).toPath(), Charset.forName("UTF-8"));
             final String content = xmlLines.stream().reduce((l, r) -> l + "\n" + r).orElse("");
             final Diff myDiff = DiffBuilder.compare(Input.fromString(result)).withTest(Input.fromString(content))
@@ -67,8 +61,8 @@ public class ExchangeModelProcessorTest {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() throws IOException {
-        final ClassLoader classLoader = ExchangeModelProcessorTest.class.getClassLoader();
-        final String path = ExchangeModelProcessorTest.class.getName().replace('.', File.separatorChar) + ".class";
+        final ClassLoader classLoader = ExchangeModelConverterTest.class.getClassLoader();
+        final String path = ExchangeModelConverterTest.class.getName().replace('.', File.separatorChar) + ".class";
         final Enumeration<URL> resources = classLoader.getResources(path);
         final List<Object[]> args = new ArrayList<>();
         while (resources.hasMoreElements()) {

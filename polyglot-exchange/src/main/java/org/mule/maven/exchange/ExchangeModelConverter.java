@@ -6,16 +6,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Repository;
-import org.apache.maven.model.building.FileModelSource;
-import org.apache.maven.model.building.ModelProcessor;
-import org.apache.maven.model.building.ModelSource2;
-import org.apache.maven.model.io.ModelParseException;
-import org.apache.maven.model.io.ModelReader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.apache.maven.model.locator.ModelLocator;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mule.maven.exchange.model.ExchangeDependency;
@@ -24,9 +15,7 @@ import org.mule.maven.exchange.model.ExchangeModelSerializer;
 import org.mule.maven.exchange.utils.ApiProjectConstants;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,97 +23,15 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 
-@Component(role = ModelProcessor.class)
-public class ExchangeModelProcessor implements ModelProcessor {
+ public class ExchangeModelConverter {
+
+    private static Logger LOGGER = Logger.getLogger(ExchangeModelConverter.class.getName());
 
     public static final String ORG_ID_KEY = "orgId";
     public static final String RAML_FRAGMENT = "raml-fragment";
-
-    private static Logger LOGGER = Logger.getLogger(ExchangeModelProcessor.class.getName());
-
-    private static final String EXCHANGE_JSON = "exchange.json";
-    private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
-
     public static final String PACKAGER_VERSION = "1.0-SNAPSHOT";
 
     private ExchangeModelSerializer objectMapper = new ExchangeModelSerializer();
-
-    @Requirement
-    private ModelReader modelReader;
-
-    @Requirement
-    private ModelLocator modelLocator;
-
-    public ExchangeModelProcessor() {
-    }
-
-    public void setModelReader(ModelReader modelReader) {
-        this.modelReader = modelReader;
-    }
-
-    public void setModelLocator(ModelLocator modelLocator) {
-        this.modelLocator = modelLocator;
-    }
-
-    @Override
-    public File locatePom(File projectDirectory) {
-        File pomFile = new File(projectDirectory, EXCHANGE_JSON);
-        if (pomFile.exists()) {
-            pomFile = new File(pomFile.getParentFile(), TEMPORAL_EXCHANGE_XML);
-            try {
-                pomFile.createNewFile();
-                pomFile.deleteOnExit();
-            } catch (IOException e) {
-                throw new RuntimeException(String.format("error creating temporal `%s` empty file", TEMPORAL_EXCHANGE_XML), e);
-            }
-        } else {
-            // behave like proper maven in case there is no pom from manager
-            pomFile = modelLocator.locatePom(projectDirectory);
-        }
-        return pomFile;
-    }
-
-    @Override
-    public Model read(File file, Map<String, ?> map) throws IOException, ModelParseException {
-        return read(new FileInputStream(file), map);
-    }
-
-    @Override
-    public Model read(InputStream inputStream, Map<String, ?> map) throws IOException, ModelParseException {
-        return read(new InputStreamReader(inputStream, StandardCharsets.UTF_8), map);
-    }
-
-    @Override
-    public Model read(Reader reader, Map<String, ?> options) throws IOException, ModelParseException {
-        Object source = (options != null) ? options.get(SOURCE) : null;
-        if (source instanceof ModelSource2 && ((ModelSource2) source).getLocation().endsWith(TEMPORAL_EXCHANGE_XML)) {
-            // lookup the temporal file ".exchange.xml"
-            final String temporalExchangeXml = ((ModelSource2) source).getLocation();
-            final File temporaryExchangeXml = new File(temporalExchangeXml);
-            final File exchangeJson = new File(temporaryExchangeXml.getParent(), EXCHANGE_JSON);
-
-            // retrieve the original "exchange.json" file and obtain the Maven model
-            final String exchangeJsonLocation = exchangeJson.getAbsolutePath();
-            final FileInputStream exchangeJsonInputStream = new FileInputStream(exchangeJson);
-            final Model mavenModel = getModel(exchangeJsonLocation, exchangeJsonInputStream);
-
-            // store the reference from the original source of truth, the "exchange.json" file
-            final FileModelSource temporalSourceXml = new FileModelSource(exchangeJson);
-            ((Map) options).put(ModelProcessor.SOURCE, temporalSourceXml);
-
-            // serialize the Maven model as XML in the temporal ".exchange.xml" file for proper installation of the .pom
-            final String data = toXmlString(mavenModel);
-            FileUtils.fileWrite(temporaryExchangeXml, data);
-            mavenModel.setPomFile(temporaryExchangeXml);
-
-            // done =]
-            return mavenModel;
-        } else {
-            //It's a normal maven project with a pom.xml file
-            //It's a normal maven project with a pom.xml file
-            return modelReader.read(reader, options);
-        }
-    }
 
     /**
      * Helper method used by studio by reflection do not change the signature.
@@ -134,13 +41,13 @@ public class ExchangeModelProcessor implements ModelProcessor {
      * @throws IOException
      */
     public static String toPomXml(File exchangeJson) throws IOException {
-        final ExchangeModelProcessor exchangeModelProcessor = new ExchangeModelProcessor();
-        final FileInputStream exchangeJsonInputStream = new FileInputStream(exchangeJson);
-        final Model mavenModel = exchangeModelProcessor.getModel(exchangeJson.getAbsolutePath(), exchangeJsonInputStream);
+        final ExchangeModelConverter exchangeModelProcessor = new ExchangeModelConverter();
+        FileReader exchangeReader = new FileReader(exchangeJson);
+        final Model mavenModel = exchangeModelProcessor.getModel(exchangeJson.getAbsolutePath(), exchangeReader);
         return exchangeModelProcessor.toXmlString(mavenModel);
     }
 
-    private Model getModel(String location, InputStream inputStream) throws IOException {
+    public Model getModel(String location, Reader inputStream) throws IOException {
         final ExchangeModel model = objectMapper.read(inputStream);
 
         boolean modified = false;
