@@ -6,8 +6,45 @@
     <groupId>org.mule.maven.exchange</groupId>
     <artifactId>exchange_maven_client</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
-	<name>exchange_maven_client</name>
+    <version>1.0.0</version>
+
+
+    <name>exchange_maven_client</name>
+    <description>This project contains the maven polyglot extension and the maven packager to build an API project using maven</description>
+    <url>http://github.com/mulesoft/api_project_maven_client</url>
+    <organization>
+        <name>MuleSoft, Inc.</name>
+        <url>http://www.mulesoft.com</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>CPAL v1.0</name>
+            <url>http://www.mulesoft.com/CPAL</url>
+        </license>
+    </licenses>
+    <mailingLists>
+        <mailingList>
+            <name>developers</name>
+            <post>studio@mulesoft.com</post>
+        </mailingList>
+    </mailingLists>
+
+    <developers>
+        <developer>
+            <id>machaval</id>
+            <name>Mariano de Achaval</name>
+        </developer>
+        <developer>
+            <id>fernandezlautaro</id>
+            <name>Lautaro Fernandez</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/mulesoft/api_project_maven_client.git</connection>
+        <developerConnection>scm:git:ssh://github.com:mulesoft/api_project_maven_client.git</developerConnection>
+        <url>http://github.com/mulesoft/api_project_maven_client/tree/master</url>
+    </scm>
 
     <modules>
         <module>polyglot-exchange</module>
@@ -20,21 +57,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>mule-releases</id>
-            <name>Mule Release Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases</url>
-        </repository>
-        <repository>
-            <id>mule-snapshots</id>
-            <name>Mule Snapshot Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
-
         <repository>
             <id>mule-releases</id>
             <name>Mule Release Repository</name>
@@ -47,4 +71,85 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <skipGpg>false</skipGpg>
+                <skipNoSnapshotsEnforcerPluginRule>false</skipNoSnapshotsEnforcerPluginRule>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${skipGpg}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sonatype</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
