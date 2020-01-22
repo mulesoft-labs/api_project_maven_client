@@ -21,7 +21,7 @@ pipeline {
         
         stage('Build and deploy') {
             steps {
-                buildWithMaven("clean deploy")
+                buildWithMaven("clean deploy  -DskipGpg -Prelease")
             }
         }
     }   
