@@ -76,7 +76,7 @@
 			<id>mule-releases</id>
 			<url>http://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
 		</pluginRepository>
-</pluginRepositories>>
+</pluginRepositories>
 
 <build>
     <pluginManagement>
