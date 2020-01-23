@@ -35,16 +35,20 @@ pipeline {
         
         stage('Build and deploy') {
             steps {
-                def mavenCommand = ${pipelineParams.buildCommandLine}
-                if (pipelineParams.skipSign) {
-                    mavenCommand += "-DskipGpg"
-                }
+                script {
+                            def mavenCommand = ${pipelineParams.buildCommandLine}
+                            if (pipelineParams.skipSign) {
+                                mavenCommand += "-DskipGpg"
+                            }
 
-                if(pipelineParams.uploadToMavenCentral){
-                    mavenCommand += "-Prelease"
+                            if(pipelineParams.uploadToMavenCentral){
+                                mavenCommand += "-Prelease"
+                            }
+
+                            buildWithMaven("${mavenCommand}")
+                        }
                 }
-                buildWithMaven("${mavenCommand}")
+            
             }
-        }
     }   
 }
