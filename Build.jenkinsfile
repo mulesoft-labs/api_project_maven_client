@@ -38,11 +38,11 @@ pipeline {
                 script {
                             def mavenCommand = pipelineParams.buildCommandLine
                             if (pipelineParams.skipSign) {
-                                mavenCommand += "-DskipGpg"
+                                mavenCommand += " -DskipGpg"
                             }
 
                             if(pipelineParams.uploadToMavenCentral){
-                                mavenCommand += "-Prelease"
+                                mavenCommand += " -Prelease"
                             }
 
                             buildWithMaven("${mavenCommand}")
