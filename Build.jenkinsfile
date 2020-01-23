@@ -36,7 +36,7 @@ pipeline {
         stage('Build and deploy') {
             steps {
                 script {
-                            def mavenCommand = ${pipelineParams.buildCommandLine}
+                            def mavenCommand = pipelineParams.buildCommandLine
                             if (pipelineParams.skipSign) {
                                 mavenCommand += "-DskipGpg"
                             }
