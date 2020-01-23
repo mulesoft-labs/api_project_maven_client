@@ -1,3 +1,21 @@
+properties([
+    parameters([
+        string(name: 'buildCommandLine', defaultValue: "clean deploy", description: 'Maven Commandline'),
+        booleanParam(name: 'skipSign', defaultValue: "false", description: 'skip sign jars'),
+        booleanParam(name: 'uploadToMavenCentral', defaultValue: "false", description: 'Generate sources and deploy to maven central')
+    ])
+])
+
+
+@Library(['studio-utils@master', 'studio-slack@master']) _
+//Library code can be found at https://github.com/mulesoft-labs/tooling-jenkins-utils
+
+def pipelineParams = [
+    "buildCommandLine" : params.buildCommandLine,
+    "skipSign": params.skipSign,
+    "uploadToMavenCentral" : params.uploadToMavenCentral
+]
+
 @Library('studio-utils@master') _
 //Library code can be found at https://github.com/mulesoft/tooling-jenkins-utils
 
@@ -21,7 +39,15 @@ pipeline {
         
         stage('Build and deploy') {
             steps {
-                buildWithMaven("clean deploy  -DskipGpg -Prelease")
+                def mavenCommand = ${pipelineParams.buildCommandLine}
+                if (pipelineParams.skipSign) {
+                    mavenCommand += "-DskipGpg"
+                }
+
+                if(pipelineParams.uploadToMavenCentral){
+                    mavenCommand += "-Prelease"
+                }
+                buildWithMaven("${mavenCommand}")
             }
         }
     }   

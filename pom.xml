@@ -211,14 +211,7 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>sonatype</id>
-            <build>
-                <defaultGoal>deploy</defaultGoal>
-                <plugins>
-                      <plugin>
+                    <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-deploy-plugin</artifactId>
                             <configuration>
@@ -245,7 +238,6 @@
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-                </plugins>
             </build>
         </profile>
     </profiles>
