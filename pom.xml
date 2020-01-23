@@ -71,6 +71,13 @@
         </snapshotRepository>
     </distributionManagement>
 
+<pluginRepositories>
+    <pluginRepository>
+			<id>mule-releases</id>
+			<url>http://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
+		</pluginRepository>
+</pluginRepositories>>
+
 <build>
     <pluginManagement>
             <plugins>
