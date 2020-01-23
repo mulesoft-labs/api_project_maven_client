@@ -1,3 +1,6 @@
+@Library('studio-utils@master') _
+//Library code can be found at https://github.com/mulesoft/tooling-jenkins-utils
+
 properties([
     parameters([
         string(name: 'buildCommandLine', defaultValue: "clean deploy", description: 'Maven Commandline'),
@@ -6,18 +9,11 @@ properties([
     ])
 ])
 
-
-@Library(['studio-utils@master', 'studio-slack@master']) _
-//Library code can be found at https://github.com/mulesoft-labs/tooling-jenkins-utils
-
 def pipelineParams = [
     "buildCommandLine" : params.buildCommandLine,
     "skipSign": params.skipSign,
     "uploadToMavenCentral" : params.uploadToMavenCentral
 ]
-
-@Library('studio-utils@master') _
-//Library code can be found at https://github.com/mulesoft/tooling-jenkins-utils
 
 pipeline {
    tools {
