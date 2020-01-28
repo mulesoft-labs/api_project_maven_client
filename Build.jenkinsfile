@@ -88,11 +88,10 @@ pipeline {
 
                             if (pipelineParams.skipSign) {
                                 mavenCommand += " -DskipGpg"
-                            } else{
-                                mavenCommand += gpgConfig()
                             }
 
                             if(pipelineParams.uploadToMavenCentral){
+                                mavenCommand += gpgConfig()
                                 mavenCommand += " -Prelease"
                             }
 
