@@ -5,14 +5,12 @@
 properties([
     parameters([
         string(name: 'buildCommandLine', defaultValue: "clean deploy", description: 'Maven Commandline'),
-        booleanParam(name: 'skipSign', defaultValue: "false", description: 'skip sign jars'),
         booleanParam(name: 'uploadToMavenCentral', defaultValue: "false", description: 'Generate sources and deploy to maven central')
     ])
 ])
 
 def pipelineParams = [
     "buildCommandLine" : params.buildCommandLine,
-    "skipSign": params.skipSign,
     "uploadToMavenCentral" : params.uploadToMavenCentral
 ]
 
@@ -85,10 +83,6 @@ pipeline {
             steps {
                 script {
                             def mavenCommand = pipelineParams.buildCommandLine
-
-                            if (pipelineParams.skipSign) {
-                                mavenCommand += " -DskipGpg"
-                            }
 
                             if(pipelineParams.uploadToMavenCentral){
                                 mavenCommand += gpgConfig()
