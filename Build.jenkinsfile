@@ -18,10 +18,9 @@ def pipelineParams = [
 
 def gpgConfig() {
 
-    String gpgOutputFolder = gpgOutputFolderParam
-    if(gpgOutputFolderParam.isEmpty()) {
-        gpgOutputFolder = "${pwd(tmp: true)}/.gnupg"
-    }
+
+    String  gpgOutputFolder = "${pwd(tmp: true)}/.gnupg"
+
 
     if(gpgOutputFolder == "" || gpgOutputFolder == "/home/ubuntu/.gnupg") {
         error("Incorrect '${gpgOutputFolder}' folder")
