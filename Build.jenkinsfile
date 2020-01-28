@@ -54,9 +54,9 @@ def gpgConfig() {
     }
     
 
-    def gpg_args = " "
+    def gpg_args = ""
     withCredentials([string(credentialsId: gpgPassPhraseId, variable: 'gpg_passphrase')]) {
-        gpg_args = "-DskipGpg=false -Dgpg.passphrase=${gpg_passphrase} -Dgpg.useagent=false -Dgpg.homedir=${gpgOutputFolder} -Dgpg.lockMode=never"
+        gpg_args = " -Dgpg.passphrase=${gpg_passphrase} -Dgpg.useagent=false -Dgpg.homedir=${gpgOutputFolder} -Dgpg.lockMode=never"
     }
 
     return "${gpg_args}"
