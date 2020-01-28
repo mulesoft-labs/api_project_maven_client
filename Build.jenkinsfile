@@ -1,6 +1,7 @@
 @Library('studio-utils@master') _
 //Library code can be found at https://github.com/mulesoft/tooling-jenkins-utils
 
+
 properties([
     parameters([
         string(name: 'buildCommandLine', defaultValue: "clean deploy", description: 'Maven Commandline'),
@@ -14,6 +15,54 @@ def pipelineParams = [
     "skipSign": params.skipSign,
     "uploadToMavenCentral" : params.uploadToMavenCentral
 ]
+
+def gpgConfig() {
+
+    String gpgOutputFolder = gpgOutputFolderParam
+    if(gpgOutputFolderParam.isEmpty()) {
+        gpgOutputFolder = "${pwd(tmp: true)}/.gnupg"
+    }
+
+    if(gpgOutputFolder == "" || gpgOutputFolder == "/home/ubuntu/.gnupg") {
+        error("Incorrect '${gpgOutputFolder}' folder")
+    }
+
+
+    sh "sudo rm -rf ${gpgOutputFolder}"
+    sh "mkdir ${gpgOutputFolder}"
+
+
+    trustdbId = 'mule-runtime-secret-file-gpg-trustdb'
+    secringId = 'mule-runtime-secret-file-gpg-secring'
+    pubringId = 'mule-runtime-secret-file-gpg-pubring'
+    gpgPassPhraseId = 'mule-runtime-secret-key-gpg-passphrase'
+
+    withCredentials([file(credentialsId: trustdbId, variable: 'gpg_trustdb'),
+                     file(credentialsId: secringId, variable: 'gpg_secring'),
+                     file(credentialsId: pubringId, variable: 'gpg_pubring')]) {
+
+        sh "chmod 700 ${gpgOutputFolder}"
+
+        sh "cat $gpg_secring > ${gpgOutputFolder}/secring.gpg"
+        sh "chmod 400 ${gpgOutputFolder}/secring.gpg"
+
+        sh "cat $gpg_pubring > ${gpgOutputFolder}/pubring.gpg"
+        sh "chmod 400 ${gpgOutputFolder}/pubring.gpg"
+
+        // trustdb.gpg needs write permissions
+        sh "cat ${gpg_trustdb} > ${gpgOutputFolder}/trustdb.gpg"
+        sh "chmod 600 ${gpgOutputFolder}/trustdb.gpg"
+    }
+    
+
+    def gpg_args = ""
+    withCredentials([string(credentialsId: gpgPassPhraseId, variable: 'gpg_passphrase')]) {
+        gpg_args = "-DskipGpg=false -Dgpg.passphrase=${gpg_passphrase} -Dgpg.useagent=false -Dgpg.homedir=${gpgOutputFolder} -Dgpg.lockMode=never"
+    }
+
+    return "${gpg_args}"
+
+}
 
 pipeline {
    tools {
@@ -37,8 +86,11 @@ pipeline {
             steps {
                 script {
                             def mavenCommand = pipelineParams.buildCommandLine
+
                             if (pipelineParams.skipSign) {
                                 mavenCommand += " -DskipGpg"
+                            } else{
+                                mavenCommand += gpgConfig()
                             }
 
                             if(pipelineParams.uploadToMavenCentral){
