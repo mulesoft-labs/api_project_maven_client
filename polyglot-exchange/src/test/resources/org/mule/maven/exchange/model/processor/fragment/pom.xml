@@ -20,7 +20,7 @@
             <plugin>
                 <groupId>org.mule.maven.exchange</groupId>
                 <artifactId>exchange_api_packager</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.1</version>
                 <executions>
                     <execution>
                         <id>generate-full-api</id>
