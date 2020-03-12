@@ -45,7 +45,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
-    public static final String PACKAGER_VERSION = "1.0.0";
+    public static final String PACKAGER_VERSION = "1.0.1";
 
     private ExchangeModelSerializer objectMapper = new ExchangeModelSerializer();
 
