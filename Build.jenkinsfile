@@ -75,7 +75,7 @@ pipeline {
         stage('Preparation') {
             steps {
               cleanWs()
-              git credentialsId: 'git', url: 'https://github.com/mulesoft/api_project_maven_client',  branch: 'STUDIO-14389'
+              git credentialsId: 'git', url: 'https://github.com/mulesoft/api_project_maven_client',  branch: 'master'
             }
         }
         
