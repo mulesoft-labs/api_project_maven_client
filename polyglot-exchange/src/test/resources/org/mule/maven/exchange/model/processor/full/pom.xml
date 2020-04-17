@@ -10,14 +10,14 @@
         <dependency>
             <groupId>68ef9520-24e9-4cf2-b2f5-620025690913</groupId>
             <artifactId>training-american-flight-data-type</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.2</version>
             <type>zip</type>
             <classifier>raml-fragment</classifier>
         </dependency>
         <dependency>
             <groupId>68ef9520-24e9-4cf2-b2f5-620025690913</groupId>
             <artifactId>training-american-flights-example</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.2</version>
             <type>zip</type>
             <classifier>raml-fragment</classifier>
         </dependency>
@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>org.mule.maven.exchange</groupId>
                 <artifactId>exchange_api_packager</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.2</version>
                 <executions>
                     <execution>
                         <id>generate-full-api</id>
