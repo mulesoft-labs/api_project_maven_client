@@ -11,6 +11,8 @@ import amf.client.parse.Oas20Parser;
 import amf.client.parse.Oas20YamlParser;
 import amf.client.parse.Raml08Parser;
 import amf.client.parse.RamlParser;
+import amf.client.remote.Content;
+import amf.client.resource.ClientResourceLoader;
 import amf.client.validate.ValidationReport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -19,12 +21,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.mule.maven.exchange.utils.ApiProjectConstants;
+import org.mule.maven.exchange.utils.ExchangeModulesResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Mojo(name = "validate-api", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -58,12 +62,14 @@ public class ValidateApiMojo extends AbstractMojo {
             try {
                 AMF.init().get();
 
-                final Environment env = DefaultEnvironment.apply();
+                Environment env = DefaultEnvironment.apply();
 
                 /* Parsing Raml 10 with specified file returning future. */
                 final BaseUnit result;
                 final ProfileName profileName;
-                final File ramlFile = new File(calculateFatDirectory(buildDirectory), this.mainFile);
+                File parent = calculateFatDirectory(buildDirectory);
+                env = env.addClientLoader(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator,"/")));
+                final File ramlFile = new File(parent, this.mainFile);
                 if (!ramlFile.exists()) {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
                 }
