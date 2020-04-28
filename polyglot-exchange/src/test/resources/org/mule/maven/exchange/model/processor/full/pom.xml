@@ -28,6 +28,11 @@
             <name>Anypoint Exchange</name>
             <url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
         </repository>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>Nexus Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
+        </repository>
     </repositories>
     <build>
         <sourceDirectory>${project.basedir}</sourceDirectory>

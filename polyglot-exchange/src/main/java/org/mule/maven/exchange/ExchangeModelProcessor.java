@@ -1,5 +1,6 @@
 package org.mule.maven.exchange;
 
+import com.google.common.collect.Lists;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -208,7 +209,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setGroupId(model.getGroupId());
         result.setName(model.getName());
         result.setVersion(model.getVersion());
-        result.setRepositories(singletonList(createExchangeRepository()));
+        result.setRepositories(Lists.newArrayList(createExchangeRepository(), createMulesoftReleasesRepository()));
         final List<Dependency> dependencies = model.getDependencies().stream().map(this::toMavenDependency).collect(Collectors.toList());
         result.setDependencies(dependencies);
         final Build build = new Build();
@@ -312,6 +313,15 @@ public class ExchangeModelProcessor implements ModelProcessor {
         repository.setId("anypoint-exchange-v2");
         repository.setName("Anypoint Exchange");
         repository.setUrl(url);
+        repository.setLayout("default");
+        return repository;
+    }
+
+    private Repository createMulesoftReleasesRepository(){
+        Repository repository = new Repository();
+        repository.setId("mulesoft-releases");
+        repository.setName("Nexus Repository");
+        repository.setUrl("https://repository-master.mulesoft.org/nexus/content/repositories/releases/");
         repository.setLayout("default");
         return repository;
     }
