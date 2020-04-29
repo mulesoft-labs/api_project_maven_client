@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.maven.exchange</groupId>
         <artifactId>exchange_maven_client</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.4</version>
     </parent>
 
 
