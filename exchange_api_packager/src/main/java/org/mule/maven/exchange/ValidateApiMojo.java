@@ -57,8 +57,7 @@ public class ValidateApiMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final File buildDirectory = new File(project.getBuild().getDirectory());
-        //How do we validate raml-fragments
-        if (classifier.equals("raml") || classifier.equals("oas")) {
+        if (classifier.equals("raml") || classifier.equals("raml-fragment") || classifier.equals("oas")) {
             try {
                 AMF.init().get();
 
@@ -75,7 +74,7 @@ public class ValidateApiMojo extends AbstractMojo {
                 }
                 final String mainFileURL = ramlFile.toURI().toString();
 
-                if (classifier.equals("raml")) {
+                if (classifier.equals("raml") || classifier.equals("raml-fragment")) {
                     final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
                     final String firstLine = lines.stream().filter(l -> !StringUtils.isBlank(l)).findFirst().orElse("");
                     if (firstLine.toUpperCase().trim().startsWith("#%RAML 0.8")) {
