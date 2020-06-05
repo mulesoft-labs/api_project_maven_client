@@ -3,6 +3,6 @@
     <extension>
          <groupId>org.mule.maven.exchange</groupId>
          <artifactId>polyglot-exchange</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
+        <version>1.0.5</version>
     </extension>
 </extensions>
