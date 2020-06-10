@@ -70,9 +70,10 @@ public class ValidateApiMojo extends AbstractMojo {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
                 }
                 final String mainFileURL = ramlFile.toURI().toString();
+                final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
 
                 if (classifier.equals("raml") || classifier.equals("raml-fragment")) {
-                    final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
+
                     final String firstLine = lines.stream().filter(l -> !StringUtils.isBlank(l)).findFirst().orElse("");
                     if (firstLine.toUpperCase().trim().startsWith("#%RAML 0.8")) {
                         result = new Raml08Parser(env).parseFileAsync(mainFileURL).get();
@@ -83,18 +84,20 @@ public class ValidateApiMojo extends AbstractMojo {
                     }
                 } else {
                     if (mainFileURL.toLowerCase().endsWith(".json")) {
-                        try {
+                        boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"\"swagger\": \"2.0\","));
+                        if(oas2){
                             result = new Oas20Parser(env).parseFileAsync(mainFileURL).get();
                             profileName = ProfileNames.OAS20();
-                        } catch (ExecutionException e) {
+                        } else {
                             result = new Oas30Parser(env).parseFileAsync(mainFileURL).get();
                             profileName = ProfileNames.OAS30();
                         }
                     } else {
-                        try {
+                        boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"swagger: \"2.0\""));
+                        if(oas2){
                             result = new Oas20YamlParser(env).parseFileAsync(mainFileURL).get();
                             profileName = ProfileNames.OAS20();
-                        } catch (ExecutionException e) {
+                        }else{
                             result = new Oas30YamlParser(env).parseFileAsync(mainFileURL).get();
                             profileName = ProfileNames.OAS30();
                         }
