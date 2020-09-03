@@ -80,6 +80,11 @@ pipeline {
         }
         
         stage('Build and deploy') {
+            when {
+                anyOf {
+                    branch 'master'
+                }
+            }
             steps {
                 script {
                             def mavenCommand = pipelineParams.buildCommandLine
