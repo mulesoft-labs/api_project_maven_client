@@ -7,18 +7,18 @@
         {
             "groupId": "68ef9520-24e9-4cf2-b2f5-620025690913",
             "assetId": "training-american-flight-data-type",
-            "version": "1.0.6"
+            "version": "1.0.7"
         },
         {
             "groupId": "68ef9520-24e9-4cf2-b2f5-620025690913",
             "assetId": "training-american-flights-example",
-            "version": "1.0.6"
+            "version": "1.0.7"
         }
     ],
     "groupId": "e391ca1a-41ef-49a4-88b3-ae1106af1867",
     "backwardsCompatible": false,
     "assetId": "american-flights-api",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "apiVersion": "v1",
     "metadata": {
         "projectId": "3fe3ce56-46da-4a8a-a863-3f79341414af",
