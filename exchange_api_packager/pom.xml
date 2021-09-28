@@ -10,7 +10,7 @@
     <parent>
         <artifactId>exchange_maven_client</artifactId>
         <groupId>org.mule.maven.exchange</groupId>
-        <version>1.0.8</version>
+        <version>1.0.9-SNAPSHOT</version>
     </parent>
 
     <dependencies>

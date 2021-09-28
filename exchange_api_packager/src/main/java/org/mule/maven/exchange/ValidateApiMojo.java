@@ -22,6 +22,7 @@ import org.mule.maven.exchange.utils.ExchangeModulesResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
@@ -69,7 +70,7 @@ public class ValidateApiMojo extends AbstractMojo {
                 if (!ramlFile.exists()) {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
                 }
-                final String mainFileURL = ramlFile.toURI().toString();
+                final String mainFileURL = URLDecoder.decode(ramlFile.toURI().toString(), "UTF-8");
                 final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
 
                 if (classifier.equals("raml") || classifier.equals("raml-fragment")) {
