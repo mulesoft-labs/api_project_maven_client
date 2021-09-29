@@ -82,7 +82,7 @@ pipeline {
         stage('Build and deploy') {
             when {
                 anyOf {
-                    branch 'master'
+                    branch 'fix/PINKP-664'
                 }
             }
             steps {
