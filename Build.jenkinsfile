@@ -75,14 +75,14 @@ pipeline {
         stage('Preparation') {
             steps {
               cleanWs()
-              git credentialsId: 'git', url: 'https://github.com/mulesoft/api_project_maven_client',  branch: 'fix/PINKP-664'
+              git credentialsId: 'git', url: 'https://github.com/mulesoft/api_project_maven_client',  branch: 'master'
             }
         }
         
         stage('Build and deploy') {
             when {
                 anyOf {
-                    branch 'fix/PINKP-664'
+                    branch 'master'
                 }
             }
             steps {
