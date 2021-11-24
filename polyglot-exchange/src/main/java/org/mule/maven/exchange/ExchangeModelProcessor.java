@@ -46,7 +46,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
-    public static final String PACKAGER_VERSION = "2.0.0-SNAPSHOT";
+    public static final String PACKAGER_VERSION = "2.0.0";
 
     public static final String MAVEN_FACADE_SYSTEM_PROPERTY = "-Dexchange.maven.repository.url";
 
