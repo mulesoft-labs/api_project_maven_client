@@ -1,8 +1,8 @@
 package org.mule.maven.exchange.utils;
 
-import amf.client.remote.Content;
-import amf.client.resource.ClientResourceLoader;
-import amf.client.resource.ResourceNotFound;
+import amf.core.client.common.remote.Content;
+import amf.core.client.platform.resource.ClientResourceLoader;
+import amf.core.client.platform.resource.ResourceNotFound;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
