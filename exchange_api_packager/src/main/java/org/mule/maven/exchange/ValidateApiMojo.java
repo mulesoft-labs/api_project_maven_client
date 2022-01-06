@@ -2,6 +2,7 @@ package org.mule.maven.exchange;
 
 
 import amf.ProfileName;
+
 import amf.ProfileNames;
 import amf.client.AMF;
 import amf.client.environment.DefaultEnvironment;
@@ -11,6 +12,7 @@ import amf.client.parse.*;
 import amf.client.remote.Content;
 import amf.client.resource.ClientResourceLoader;
 import amf.client.validate.ValidationReport;
+import amf.core.client.platform.model.document.BaseUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
