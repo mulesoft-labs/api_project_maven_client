@@ -5,11 +5,8 @@ import amf.apicontract.client.platform.AMFBaseUnitClient;
 import amf.apicontract.client.platform.AMFConfiguration;
 import amf.apicontract.client.platform.OASConfiguration;
 import amf.apicontract.client.platform.RAMLConfiguration;
-import amf.core.client.common.validation.ProfileName;
-import amf.core.client.common.validation.ProfileNames;
 import amf.core.client.platform.AMFParseResult;
 import amf.core.client.platform.model.document.BaseUnit;
-import amf.core.client.platform.resource.ResourceLoader;
 import amf.core.client.platform.validation.AMFValidationReport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -59,7 +56,6 @@ public class ValidateApiMojo extends AbstractMojo {
                 /* Parsing Raml 10 with specified file returning future. */
                 BaseUnit result = null;
                 File parent = calculateFatDirectory(buildDirectory);
-                ResourceLoader loader = new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/"));
                 final File ramlFile = new File(parent, this.mainFile);
                 if (!ramlFile.exists()) {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
