@@ -86,7 +86,6 @@ public class ValidateApiMojo extends AbstractMojo {
                         //profileName = ProfileNames.RAML();
                     }
                 } else {
-                    if (mainFileURL.toLowerCase().endsWith(".json")) {
                         boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"\"swagger\": \"2.0\","));
                         if(oas2){
                             AMFBaseUnitClient client = OASConfiguration.OAS20().baseUnitClient();
@@ -103,20 +102,6 @@ public class ValidateApiMojo extends AbstractMojo {
                             //result = new Oas30Parser(env).parseFileAsync(mainFileURL).get();
                             //profileName = ProfileNames.OAS30();
                         }
-                    } else {
-                        boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"swagger: \"2.0\""));
-                        if(oas2){
-                            //AMFBaseUnitClient client = OASConfiguration.OAS30().
-                            //AMFParseResult parseResult = client.parse(mainFileURL).get();
-                            //result = parseResult.baseUnit();
-                            //profileName = ProfileNames.OAS30();
-                            //result = new Oas20YamlParser(env).parseFileAsync(mainFileURL).get();
-                            //profileName = ProfileNames.OAS20();
-                        }else{
-                            //result = new Oas30YamlParser(env).parseFileAsync(mainFileURL).get();
-                            //profileName = ProfileNames.OAS30();
-                        }
-                    }
                 }
 
                 /* Run RAML default validations on parsed unit (expects no errors). */
