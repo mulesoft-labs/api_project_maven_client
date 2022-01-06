@@ -51,63 +51,45 @@ public class ValidateApiMojo extends AbstractMojo {
         final File buildDirectory = new File(project.getBuild().getDirectory());
         if (classifier.equals("raml") || classifier.equals("raml-fragment") || classifier.equals("oas")) {
             try {
-                //AMF.init().get();
-
-                //Environment env = DefaultEnvironment.apply();
-
                 /* Parsing Raml 10 with specified file returning future. */
                 BaseUnit result = null;
-                ProfileName profileName;
                 File parent = calculateFatDirectory(buildDirectory);
-                //env = env.addClientLoader(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/")));
+
                 final File ramlFile = new File(parent, this.mainFile);
                 if (!ramlFile.exists()) {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
                 }
                 final String mainFileURL = URLDecoder.decode(ramlFile.toURI().toString(), "UTF-8");
                 final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
-
+                final AMFBaseUnitClient client;
+                final AMFParseResult parseResult;
                 if (classifier.equals("raml") || classifier.equals("raml-fragment")) {
 
                     final String firstLine = lines.stream().filter(l -> !StringUtils.isBlank(l)).findFirst().orElse("");
                     if (firstLine.toUpperCase().trim().startsWith("#%RAML 0.8")) {
-                        AMFBaseUnitClient client = RAMLConfiguration.RAML08().baseUnitClient();
-                        AMFParseResult parseResult = client.parse(mainFileURL).get();
+                        client = RAMLConfiguration.RAML08().baseUnitClient();
+                        parseResult = client.parse(mainFileURL).get();
                         result = parseResult.baseUnit();
-                        profileName = ProfileNames.RAML08();
-                        //result = new Raml08Parser(env).parseFileAsync(mainFileURL).get();
-                        //profileName = ProfileNames.RAML08();
                     } else {
-                        AMFBaseUnitClient client = RAMLConfiguration.RAML10().baseUnitClient();
-                        AMFParseResult parseResult = client.parse(mainFileURL).get();
+                        client = RAMLConfiguration.RAML10().baseUnitClient();
+                        parseResult = client.parse(mainFileURL).get();
                         result = parseResult.baseUnit();
-                        profileName = ProfileNames.RAML10();
-                        //result = new RamlParser(env).parseFileAsync(mainFileURL).get();
-                        //profileName = ProfileNames.RAML();
                     }
                 } else {
                         boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"\"swagger\": \"2.0\","));
                         if(oas2){
-                            AMFBaseUnitClient client = OASConfiguration.OAS20().baseUnitClient();
-                            AMFParseResult parseResult = client.parse(mainFileURL).get();
+                            client = OASConfiguration.OAS20().baseUnitClient();
+                            parseResult = client.parse(mainFileURL).get();
                             result = parseResult.baseUnit();
-                            profileName = ProfileNames.OAS20();
-                            //result = new Oas20Parser(env).parseFileAsync(mainFileURL).get();
-                            //profileName = ProfileNames.OAS20();
                         } else {
-                            AMFBaseUnitClient client = OASConfiguration.OAS30().baseUnitClient();
-                            AMFParseResult parseResult = client.parse(mainFileURL).get();
+                            client = OASConfiguration.OAS30().baseUnitClient();
+                            parseResult = client.parse(mainFileURL).get();
                             result = parseResult.baseUnit();
-                            profileName = ProfileNames.OAS30();
-                            //result = new Oas30Parser(env).parseFileAsync(mainFileURL).get();
-                            //profileName = ProfileNames.OAS30();
                         }
                 }
 
                 /* Run RAML default validations on parsed unit (expects no errors). */
-                AMFBaseUnitClient clientValidator = RAMLConfiguration.RAML10().baseUnitClient();
-                final AMFValidationReport report = clientValidator.validate(result).get();
-                //final ValidationReport report = AMF.validate(result, profileName, profileName.messageStyle()).get();
+                final AMFValidationReport report = client.validate(result).get();
                 if (!report.conforms()) {
                     getLog().error(report.toString());
                     throw new MojoFailureException("Build Fail");
