@@ -2,12 +2,14 @@ package org.mule.maven.exchange;
 
 
 import amf.apicontract.client.platform.AMFBaseUnitClient;
+import amf.apicontract.client.platform.AMFConfiguration;
 import amf.apicontract.client.platform.OASConfiguration;
 import amf.apicontract.client.platform.RAMLConfiguration;
 import amf.core.client.common.validation.ProfileName;
 import amf.core.client.common.validation.ProfileNames;
 import amf.core.client.platform.AMFParseResult;
 import amf.core.client.platform.model.document.BaseUnit;
+import amf.core.client.platform.resource.ResourceLoader;
 import amf.core.client.platform.validation.AMFValidationReport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -16,11 +18,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.mule.maven.exchange.utils.ApiProjectConstants;
+import org.mule.maven.exchange.utils.ExchangeModulesResourceLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -54,7 +59,7 @@ public class ValidateApiMojo extends AbstractMojo {
                 /* Parsing Raml 10 with specified file returning future. */
                 BaseUnit result = null;
                 File parent = calculateFatDirectory(buildDirectory);
-
+                ResourceLoader loader = new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/"));
                 final File ramlFile = new File(parent, this.mainFile);
                 if (!ramlFile.exists()) {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
@@ -63,30 +68,27 @@ public class ValidateApiMojo extends AbstractMojo {
                 final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
                 final AMFBaseUnitClient client;
                 final AMFParseResult parseResult;
+                final AMFConfiguration amfConfiguration;
                 if (classifier.equals("raml") || classifier.equals("raml-fragment")) {
 
                     final String firstLine = lines.stream().filter(l -> !StringUtils.isBlank(l)).findFirst().orElse("");
                     if (firstLine.toUpperCase().trim().startsWith("#%RAML 0.8")) {
-                        client = RAMLConfiguration.RAML08().baseUnitClient();
-                        parseResult = client.parse(mainFileURL).get();
-                        result = parseResult.baseUnit();
+                        amfConfiguration  = RAMLConfiguration.RAML08();
                     } else {
-                        client = RAMLConfiguration.RAML10().baseUnitClient();
-                        parseResult = client.parse(mainFileURL).get();
-                        result = parseResult.baseUnit();
+                        amfConfiguration  = RAMLConfiguration.RAML10();
                     }
                 } else {
                         boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"\"swagger\": \"2.0\","));
                         if(oas2){
-                            client = OASConfiguration.OAS20().baseUnitClient();
-                            parseResult = client.parse(mainFileURL).get();
-                            result = parseResult.baseUnit();
+                            amfConfiguration  = OASConfiguration.OAS20();
                         } else {
-                            client = OASConfiguration.OAS30().baseUnitClient();
-                            parseResult = client.parse(mainFileURL).get();
-                            result = parseResult.baseUnit();
+                            amfConfiguration  = OASConfiguration.OAS30();
                         }
                 }
+                amfConfiguration.withResourceLoaders(Collections.singletonList(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/"))));
+                client = amfConfiguration.baseUnitClient();
+                parseResult = client.parse(mainFileURL).get();
+                result = parseResult.baseUnit();
 
                 /* Run RAML default validations on parsed unit (expects no errors). */
                 final AMFValidationReport report = client.validate(result).get();
