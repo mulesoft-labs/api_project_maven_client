@@ -1,13 +1,11 @@
 package org.mule.maven.exchange;
 
 
-import amf.apicontract.client.platform.AMFBaseUnitClient;
-import amf.apicontract.client.platform.AMFConfiguration;
-import amf.apicontract.client.platform.OASConfiguration;
-import amf.apicontract.client.platform.RAMLConfiguration;
+import amf.apicontract.client.platform.*;
 import amf.core.client.platform.AMFParseResult;
 import amf.core.client.platform.model.document.BaseUnit;
 import amf.core.client.platform.validation.AMFValidationReport;
+import amf.core.internal.remote.Spec;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -54,40 +52,25 @@ public class ValidateApiMojo extends AbstractMojo {
         if (classifier.equals("raml") || classifier.equals("raml-fragment") || classifier.equals("oas")) {
             try {
                 /* Parsing Raml 10 with specified file returning future. */
-                BaseUnit result = null;
+                BaseUnit result;
                 File parent = calculateFatDirectory(buildDirectory);
                 final File ramlFile = new File(parent, this.mainFile);
                 if (!ramlFile.exists()) {
                     throw new MojoFailureException("The specified 'main' property '" + this.mainFile + "' can not be found. Please review your exchange.json");
                 }
                 final String mainFileURL = URLDecoder.decode(ramlFile.toURI().toString(), "UTF-8");
-                final List<String> lines = Files.readAllLines(ramlFile.toPath(), Charset.forName("UTF-8"));
                 final AMFBaseUnitClient client;
                 final AMFParseResult parseResult;
-                final AMFConfiguration amfConfiguration;
-                if (classifier.equals("raml") || classifier.equals("raml-fragment")) {
+                final AMFConfiguration amfConfiguration = APIConfiguration.API();
 
-                    final String firstLine = lines.stream().filter(l -> !StringUtils.isBlank(l)).findFirst().orElse("");
-                    if (firstLine.toUpperCase().trim().startsWith("#%RAML 0.8")) {
-                        amfConfiguration  = RAMLConfiguration.RAML08();
-                    } else {
-                        amfConfiguration  = RAMLConfiguration.RAML10();
-                    }
-                } else {
-                        boolean oas2 = lines.stream().anyMatch(l->StringUtils.equals(l.trim(),"\"swagger\": \"2.0\","));
-                        if(oas2){
-                            amfConfiguration  = OASConfiguration.OAS20();
-                        } else {
-                            amfConfiguration  = OASConfiguration.OAS30();
-                        }
-                }
-                amfConfiguration.withResourceLoaders(Collections.singletonList(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/"))));
+                amfConfiguration.withResourceLoader(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/")));
                 client = amfConfiguration.baseUnitClient();
                 parseResult = client.parse(mainFileURL).get();
                 result = parseResult.baseUnit();
 
                 /* Run RAML default validations on parsed unit (expects no errors). */
-                final AMFValidationReport report = client.validate(result).get();
+                final AMFBaseUnitClient validatorClient = WebAPIConfiguration.fromSpec(result.sourceSpec().get()).baseUnitClient();
+                final AMFValidationReport report = validatorClient.validate(result).get();
                 if (!report.conforms()) {
                     getLog().error(report.toString());
                     throw new MojoFailureException("Build Fail");
