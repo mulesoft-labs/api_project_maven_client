@@ -8,7 +8,6 @@
     <packaging>pom</packaging>
     <version>2.1.0</version>
 
-
     <name>exchange_maven_client</name>
     <description>This project contains the maven polyglot extension and the maven packager to build an API project using maven</description>
     <url>http://github.com/mulesoft/api_project_maven_client</url>
