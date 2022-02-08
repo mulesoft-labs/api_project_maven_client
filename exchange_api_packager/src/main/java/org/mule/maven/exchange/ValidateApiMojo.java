@@ -70,9 +70,14 @@ public class ValidateApiMojo extends AbstractMojo {
 
                 /* Run RAML default validations on parsed unit (expects no errors). */
                 final AMFBaseUnitClient validatorClient = WebAPIConfiguration.fromSpec(result.sourceSpec().get()).baseUnitClient();
-                final AMFValidationReport report = validatorClient.validate(result).get();
-                if (!report.conforms()) {
-                    getLog().error(report.toString());
+                final AMFValidationReport validationReport = validatorClient.validate(result).get();
+                
+                if (!parseResult.conforms()) {
+                    getLog().error(parseResult.toString());
+                    throw new MojoFailureException("Build Fail");
+                }
+                if (!validationReport.conforms()) {
+                    getLog().error(validationReport.toString());
                     throw new MojoFailureException("Build Fail");
                 }
 
