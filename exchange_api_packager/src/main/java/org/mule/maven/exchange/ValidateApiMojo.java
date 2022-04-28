@@ -61,9 +61,8 @@ public class ValidateApiMojo extends AbstractMojo {
                 final String mainFileURL = URLDecoder.decode(ramlFile.toURI().toString(), "UTF-8");
                 final AMFBaseUnitClient client;
                 final AMFParseResult parseResult;
-                final AMFConfiguration amfConfiguration = WebAPIConfiguration.WebAPI();
-
-                amfConfiguration.withResourceLoader(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/")));
+                final AMFConfiguration amfConfiguration = WebAPIConfiguration.WebAPI().withResourceLoader(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/")));
+                
                 client = amfConfiguration.baseUnitClient();
                 parseResult = client.parse(mainFileURL).get();
                 
