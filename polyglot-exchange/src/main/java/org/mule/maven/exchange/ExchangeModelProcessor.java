@@ -33,8 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.singletonList;
-
 @Component(role = ModelProcessor.class)
 public class ExchangeModelProcessor implements ModelProcessor {
 
@@ -46,9 +44,12 @@ public class ExchangeModelProcessor implements ModelProcessor {
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
-    public static final String PACKAGER_VERSION = "2.1.2";
+    public static final String PACKAGER_VERSION = "2.1.3-SNAPSHOT";
 
     public static final String MAVEN_FACADE_SYSTEM_PROPERTY = "-Dexchange.maven.repository.url";
+
+    public static final String MAVEN_FACADE_V2_SYSTEM_PROPERTY = "-Dexchange.maven.v2.repository.url";
+
 
     private ExchangeModelSerializer objectMapper = new ExchangeModelSerializer();
 
@@ -209,7 +210,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setGroupId(model.getGroupId());
         result.setName(model.getName());
         result.setVersion(model.getVersion());
-        result.setRepositories(Lists.newArrayList(createExchangeRepository(), createMulesoftReleasesRepository()));
+        result.setRepositories(Lists.newArrayList(createExchangeV3Repository(), createExchangeV2Repository(), createMulesoftReleasesRepository()));
         final List<Dependency> dependencies = model.getDependencies().stream().map(this::toMavenDependency).collect(Collectors.toList());
         result.setDependencies(dependencies);
         final Build build = new Build();
@@ -307,11 +308,21 @@ public class ExchangeModelProcessor implements ModelProcessor {
         return result;
     }
 
-    private Repository createExchangeRepository() {
+    private Repository createExchangeV3Repository() {
         String url = System.getProperty(MAVEN_FACADE_SYSTEM_PROPERTY, "https://maven.anypoint.mulesoft.com/api/v3/maven");
         Repository repository = new Repository();
         repository.setId("anypoint-exchange-v3");
         repository.setName("Anypoint Exchange");
+        repository.setUrl(url);
+        repository.setLayout("default");
+        return repository;
+    }
+
+    private Repository createExchangeV2Repository() {
+        String url = System.getProperty(MAVEN_FACADE_V2_SYSTEM_PROPERTY, "https://maven.anypoint.mulesoft.com/api/v2/maven");
+        Repository repository = new Repository();
+        repository.setId("anypoint-exchange-v2");
+        repository.setName("Anypoint Exchange V2");
         repository.setUrl(url);
         repository.setLayout("default");
         return repository;
