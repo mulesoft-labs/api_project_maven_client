@@ -61,7 +61,7 @@
         <dependency>
             <groupId>com.github.amlorg</groupId>
             <artifactId>amf-api-contract_2.12</artifactId>
-            <version>5.1.0</version>
+            <version>5.2.0</version>
         </dependency>
 
     </dependencies>
