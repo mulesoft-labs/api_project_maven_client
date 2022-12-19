@@ -38,6 +38,11 @@ public class ExchangeModelProcessor implements ModelProcessor {
 
     public static final String ORG_ID_KEY = "orgId";
     public static final String RAML_FRAGMENT = "raml-fragment";
+    public static final String LIGHT_RULESET = "light-ruleset";
+    public static final String VALIDATION_SCOPE = "validation";
+    public static final String SCOPE_ADDITIONAL_PROPERTY_KEY = "scope";
+
+
 
     private static Logger LOGGER = Logger.getLogger(ExchangeModelProcessor.class.getName());
 
@@ -303,7 +308,12 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setArtifactId(dep.getAssetId());
         result.setGroupId(dep.getGroupId());
         result.setVersion(dep.getVersion());
-        result.setClassifier(RAML_FRAGMENT);
+        if (VALIDATION_SCOPE.equals(dep.getAdditionalProperties().get(SCOPE_ADDITIONAL_PROPERTY_KEY))) {
+        	result.setClassifier(LIGHT_RULESET);
+        }
+        else {
+        	result.setClassifier(RAML_FRAGMENT);
+        }
         result.setType("zip");
         return result;
     }
