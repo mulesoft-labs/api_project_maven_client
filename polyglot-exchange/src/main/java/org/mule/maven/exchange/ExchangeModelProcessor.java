@@ -38,7 +38,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
 
     public static final String ORG_ID_KEY = "orgId";
     public static final String RAML_FRAGMENT = "raml-fragment";
-    public static final String LIGHT_RULESET = "light-ruleset";
+    public static final String FAT_RULESET = "fat-ruleset";
     public static final String VALIDATION_SCOPE = "validation";
     public static final String SCOPE_ADDITIONAL_PROPERTY_KEY = "scope";
 
@@ -49,7 +49,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
-    public static final String PACKAGER_VERSION = "2.2.1";
+    public static final String PACKAGER_VERSION = "2.2.2";
 
     public static final String MAVEN_FACADE_SYSTEM_PROPERTY = "-Dexchange.maven.repository.url";
 
@@ -309,7 +309,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setGroupId(dep.getGroupId());
         result.setVersion(dep.getVersion());
         if (VALIDATION_SCOPE.equals(dep.getAdditionalProperties().get(SCOPE_ADDITIONAL_PROPERTY_KEY))) {
-        	result.setClassifier(LIGHT_RULESET);
+        	result.setClassifier(FAT_RULESET);
         }
         else {
         	result.setClassifier(RAML_FRAGMENT);
