@@ -63,7 +63,6 @@ def gpgConfig() {
 
 pipeline {
    tools {
-        jdk 'JDK8'
         maven 'M3'
     }
     
@@ -75,6 +74,7 @@ pipeline {
         stage('Preparation') {
             steps {
               cleanWs()
+              installJdk('TEMURIN-JDK17')
               git credentialsId: 'git', url: 'https://github.com/mulesoft/api_project_maven_client',  branch: 'master'
             }
         }
