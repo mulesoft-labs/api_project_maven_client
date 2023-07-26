@@ -63,7 +63,7 @@ def gpgConfig() {
 
 pipeline {
     agent {
-        label 'ubuntu-14.04'
+        label 'ubuntu-22.04'
     }
 
     stages {
