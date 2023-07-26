@@ -62,10 +62,6 @@ def gpgConfig() {
 }
 
 pipeline {
-   tools {
-        maven 'Maven 3.6.3'
-    }
-    
     agent {
         label 'ubuntu-14.04'
     }
@@ -94,7 +90,7 @@ pipeline {
                                 mavenCommand += " -Prelease"
                             }
 
-                            buildWithMaven("${mavenCommand}")
+                            buildWithMavenWrapper("${mavenCommand}")
                         }
                 }
             
