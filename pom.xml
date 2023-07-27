@@ -6,7 +6,7 @@
     <groupId>org.mule.maven.exchange</groupId>
     <artifactId>exchange_maven_client</artifactId>
     <packaging>pom</packaging>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.3.0</version>
 
     <name>exchange_maven_client</name>
     <description>This project contains the maven polyglot extension and the maven packager to build an API project using maven</description>
@@ -52,8 +52,6 @@
     </modules>
 	
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 
@@ -131,6 +129,16 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <release>8</release>
+                    </configuration>
                 </plugin>
             </plugins>
     </pluginManagement>

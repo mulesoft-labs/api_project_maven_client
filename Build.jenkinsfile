@@ -62,19 +62,15 @@ def gpgConfig() {
 }
 
 pipeline {
-   tools {
-        jdk 'JDK8'
-        maven 'M3'
-    }
-    
     agent {
-        label 'ubuntu-14.04'
+        label 'ubuntu-22.04'
     }
 
     stages {
         stage('Preparation') {
             steps {
               cleanWs()
+              installJdk('TEMURIN-JDK17')
               git credentialsId: 'git', url: 'https://github.com/mulesoft/api_project_maven_client',  branch: 'master'
             }
         }
@@ -94,7 +90,7 @@ pipeline {
                                 mavenCommand += " -Prelease"
                             }
 
-                            buildWithMaven("${mavenCommand}")
+                            buildWithMavenWrapper("${mavenCommand}")
                         }
                 }
             
