@@ -1,3 +1,6 @@
+/*
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
+ */
 package org.mule.maven.exchange;
 
 import org.apache.maven.plugin.AbstractMojo;
