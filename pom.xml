@@ -56,12 +56,21 @@
     </modules>
 
     <properties>
+
+        <!-- Plugins versions -->
         <license-maven-plugin.version>4.2</license-maven-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+
+        <!-- Plugins dependencies versions -->
+        <mulesoft-license.version>1.1.0</mulesoft-license.version>
+
+        <!-- Mulesoft License properties -->
+        <mulesoft-license.path>LICENSE_HEADER_80.txt</mulesoft-license.path>
+        <mulesoft-license.year>2023</mulesoft-license.year>
     </properties>
 
     <distributionManagement>
@@ -105,12 +114,18 @@
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${license-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.mulesoft.license</groupId>
+                            <artifactId>license</artifactId>
+                            <version>${mulesoft-license.version}</version>
+                        </dependency>
+                    </dependencies>
                     <configuration>
                         <skip>${skipVerifications}</skip>
-                        <header>com/mycila/maven/plugin/license/templates/CPAL.txt</header>
+                        <header>${mulesoft-license.path}</header>
                         <properties>
-                            <owner>MuleSoft, Inc</owner>
-                            <project.url>http://www.mulesoft.com</project.url>
+                            <year>${mulesoft-license.year}</year>
                         </properties>
                         <excludes>
                             <exclude>target/**</exclude>
@@ -166,6 +181,11 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+
         </plugins>
     </build>
     <profiles>

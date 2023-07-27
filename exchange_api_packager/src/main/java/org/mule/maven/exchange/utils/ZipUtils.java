@@ -1,3 +1,6 @@
+/*
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
+ */
 //Import all needed packages
 package org.mule.maven.exchange.utils;
 
