@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.mule.maven.exchange</groupId>
     <artifactId>exchange_maven_client</artifactId>
     <packaging>pom</packaging>
     <version>2.3.0</version>
 
     <name>exchange_maven_client</name>
+
     <description>This project contains the maven polyglot extension and the maven packager to build an API project using maven</description>
+
     <url>http://github.com/mulesoft/api_project_maven_client</url>
+
     <organization>
         <name>MuleSoft, Inc.</name>
         <url>http://www.mulesoft.com</url>
     </organization>
+
     <licenses>
         <license>
             <name>CPAL v1.0</name>
             <url>http://www.mulesoft.com/CPAL</url>
         </license>
     </licenses>
+
     <mailingLists>
         <mailingList>
             <name>developers</name>
@@ -50,10 +54,15 @@
         <module>exchange_api_packager</module>
         <module>exchange-model</module>
     </modules>
-	
-    <properties>
-    </properties>
 
+    <properties>
+        <license-maven-plugin.version>4.2</license-maven-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+    </properties>
 
     <distributionManagement>
         <repository>
@@ -68,34 +77,34 @@
         </snapshotRepository>
     </distributionManagement>
 
-<build>
-    <pluginManagement>
+    <build>
+        <pluginManagement>
             <plugins>
                 <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.1.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <doclint>none</doclint>
-                        </configuration>
-                    </plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <doclint>none</doclint>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                </plugin>              
-               
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>${license.maven.plugin.version}</version>
+                    <version>${license-maven-plugin.version}</version>
                     <configuration>
                         <skip>${skipVerifications}</skip>
                         <header>com/mycila/maven/plugin/license/templates/CPAL.txt</header>
@@ -133,7 +142,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -141,9 +150,8 @@
                     </configuration>
                 </plugin>
             </plugins>
-    </pluginManagement>
-
-       <plugins>
+        </pluginManagement>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -160,7 +168,6 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>release</id>
@@ -173,7 +180,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.1.1</version>
+                        <version>${maven-javadoc-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -203,7 +210,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>${maven-gpg-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -224,7 +231,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.7</version>
+                        <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>sonatype-nexus-staging</serverId>
@@ -232,18 +239,16 @@
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-                </plugins>        
+                </plugins>
             </build>
         </profile>
     </profiles>
-
     <repositories>
-		<repository>
-			<id>mulesoft-releases</id>
-			<name>Nexus Repository</name>
-			<layout>default</layout>
-			<url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
-		</repository>
-	</repositories>
-
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>Nexus Repository</name>
+            <layout>default</layout>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
 </project>
