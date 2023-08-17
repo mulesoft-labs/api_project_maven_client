@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -43,7 +44,6 @@ public class ExchangeModelProcessor implements ModelProcessor {
     public static final String RAML_FRAGMENT = "raml-fragment";
     public static final String FAT_RULESET = "fat-ruleset";
     public static final String VALIDATION_SCOPE = "validation";
-    public static final String SCOPE_ADDITIONAL_PROPERTY_KEY = "scope";
 
 
 
@@ -311,14 +311,18 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setArtifactId(dep.getAssetId());
         result.setGroupId(dep.getGroupId());
         result.setVersion(dep.getVersion());
-        if (VALIDATION_SCOPE.equals(dep.getAdditionalProperties().get(SCOPE_ADDITIONAL_PROPERTY_KEY))) {
-        	result.setClassifier(FAT_RULESET);
-        }
-        else {
-        	result.setClassifier(RAML_FRAGMENT);
-        }
-        result.setType("zip");
+        if (VALIDATION_SCOPE.equals(dep.getScope()))
+            result.setClassifier(FAT_RULESET); // set for legacy cases (scope but no classifier in dependency)
+        else result.setClassifier(RAML_FRAGMENT);
+        setOrDefault(dep.getPackaging(), "zip", result::setType);
+        setOrDefault(dep.getClassifier(), null, result::setClassifier);
         return result;
+    }
+
+    private void setOrDefault(Object obj, String fallback, Consumer<String> fn) {
+        if(obj instanceof String && !((String)obj).isEmpty())
+            fn.accept((String)obj);
+        else if(fallback != null) fn.accept(fallback);
     }
 
     private Repository createExchangeV3Repository() {

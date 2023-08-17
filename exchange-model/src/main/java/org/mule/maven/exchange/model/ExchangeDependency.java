@@ -52,6 +52,30 @@ public class ExchangeDependency {
      */
     @JsonProperty("version")
     private String version = "";
+    /**
+     * The Scope of the dependency
+     * <p>
+     * <p>
+     * (not Required, only descriptorVersion: 1.0.0)
+     */
+    @JsonProperty("scope")
+    private String scope = "";
+    /**
+     * The Classifier of the dependency
+     * <p>
+     * <p>
+     * (not Required, only descriptorVersion: 1.0.0)
+     */
+    @JsonProperty("classifier")
+    private String classifier = "";
+    /**
+     * The Packaging of the dependency
+     * <p>
+     * <p>
+     * (not Required, only descriptorVersion: 1.0.0)
+     */
+    @JsonProperty("packaging")
+    private String packaging = "";
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -173,7 +197,40 @@ public class ExchangeDependency {
                 "groupId='" + groupId + '\'' +
                 ", assetId='" + assetId + '\'' +
                 ", version='" + version + '\'' +
+                ", scope='" + scope + '\'' +
+                ", classifier='" + classifier + '\'' +
+                ", packaging='" + packaging + '\'' +
                 ", additionalProperties=" + additionalProperties +
                 '}';
+    }
+
+    @JsonProperty("classifier")
+    public String getClassifier() {
+        return classifier;
+    }
+
+    @JsonProperty("classifier")
+    public void setClassifier(String classifier) {
+        this.classifier = classifier;
+    }
+
+    @JsonProperty("scope")
+    public String getScope() {
+        return scope;
+    }
+
+    @JsonProperty("scope")
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    @JsonProperty("packaging")
+    public String getPackaging() {
+        return packaging;
+    }
+
+    @JsonProperty("packaging")
+    public void setPackaging(String packaging) {
+        this.packaging = packaging;
     }
 }
