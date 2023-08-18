@@ -4,12 +4,12 @@
 package org.mule.maven.exchange;
 
 
-import amf.apicontract.client.platform.*;
+import amf.apicontract.client.platform.AMFBaseUnitClient;
+import amf.apicontract.client.platform.AMFConfiguration;
+import amf.apicontract.client.platform.WebAPIConfiguration;
 import amf.core.client.platform.AMFParseResult;
 import amf.core.client.platform.model.document.BaseUnit;
 import amf.core.client.platform.validation.AMFValidationReport;
-import amf.core.internal.remote.Spec;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -21,10 +21,6 @@ import org.mule.maven.exchange.utils.ExchangeModulesResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Mojo(name = "validate-api", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -49,8 +45,21 @@ public class ValidateApiMojo extends AbstractMojo {
     @Parameter
     private String fatApiDirectory;
 
+    /**
+     * property to skip the complete connector generation
+     */
+    @Parameter(property = ApiProjectConstants.MAVEN_SKIP_VALIDATE_API, defaultValue = "false")
+    private boolean skipValidateApi;
+
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if(skipValidateApi){
+            getLog().info("Ignoring validation..");
+            return;
+        } else {
+            getLog().info(String.format("To disable api validation parameterize '-D%s=true'", ApiProjectConstants.MAVEN_SKIP_VALIDATE_API));
+        }
         final File buildDirectory = new File(project.getBuild().getDirectory());
         if (classifier.equals("raml") || classifier.equals("raml-fragment") || classifier.equals("oas")) {
             try {
@@ -65,21 +74,21 @@ public class ValidateApiMojo extends AbstractMojo {
                 final AMFBaseUnitClient client;
                 final AMFParseResult parseResult;
                 final AMFConfiguration amfConfiguration = WebAPIConfiguration.WebAPI().withResourceLoader(new ExchangeModulesResourceLoader(parent.getAbsolutePath().replace(File.separator, "/")));
-                
+
                 client = amfConfiguration.baseUnitClient();
                 parseResult = client.parse(mainFileURL).get();
-                
+
                 if (!parseResult.conforms()) {
                     getLog().error(parseResult.toString());
                     throw new MojoFailureException("Build Fail");
                 }
-                
+
                 result = parseResult.baseUnit();
 
                 /* Run RAML default validations on parsed unit (expects no errors). */
                 final AMFBaseUnitClient validatorClient = WebAPIConfiguration.fromSpec(result.sourceSpec().get()).baseUnitClient();
                 final AMFValidationReport validationReport = validatorClient.validate(result).get();
-                
+
                 if (!validationReport.conforms()) {
                     getLog().error(validationReport.toString());
                     throw new MojoFailureException("Build Fail");
