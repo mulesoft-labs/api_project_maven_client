@@ -46,7 +46,6 @@ public class ExchangeModelProcessor implements ModelProcessor {
     public static final String VALIDATION_SCOPE = "validation";
 
 
-
     private static Logger LOGGER = Logger.getLogger(ExchangeModelProcessor.class.getName());
 
     private static final String EXCHANGE_JSON = "exchange.json";
@@ -320,9 +319,9 @@ public class ExchangeModelProcessor implements ModelProcessor {
     }
 
     private void setOrDefault(Object obj, String fallback, Consumer<String> fn) {
-        if(obj instanceof String && !((String)obj).isEmpty())
-            fn.accept((String)obj);
-        else if(fallback != null) fn.accept(fallback);
+        if (obj instanceof String && !((String) obj).isEmpty())
+            fn.accept((String) obj);
+        else if (fallback != null) fn.accept(fallback);
     }
 
     private Repository createExchangeV3Repository() {
@@ -345,7 +344,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
         return repository;
     }
 
-    private Repository createMulesoftReleasesRepository(){
+    private Repository createMulesoftReleasesRepository() {
         Repository repository = new Repository();
         repository.setId("mulesoft-releases");
         repository.setName("Nexus Repository");

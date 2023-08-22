@@ -54,11 +54,11 @@ public class ValidateApiMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if(skipValidateApi){
-            getLog().info("Ignoring validation..");
+        if (skipValidateApi) {
+            getLog().debug("Ignoring validation..");
             return;
         } else {
-            getLog().info(String.format("To disable api validation parameterize '-D%s=true'", ApiProjectConstants.MAVEN_SKIP_VALIDATE_API));
+            getLog().debug(String.format("To disable api validation parameterize '-D%s=true'", ApiProjectConstants.MAVEN_SKIP_VALIDATE_API));
         }
         final File buildDirectory = new File(project.getBuild().getDirectory());
         if (classifier.equals("raml") || classifier.equals("raml-fragment") || classifier.equals("oas")) {
