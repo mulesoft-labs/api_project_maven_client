@@ -13,6 +13,7 @@ public class ApiProjectConstants {
     public static final String EXCHANGE_MODULES_REPOSITORY = "exchange_modules_repository";
 
     public static final String MAVEN_SKIP_REST_CONNECT = "exchange.maven.restConnect.skip";
+    public static final String MAVEN_SKIP_VALIDATE_API = "exchange.maven.validateApi.skip";
     public static final String REST_CONNECT_OUTPUTDIR = "rest_connect_workdir";
 
     public static File getFatApiDirectory(File buildDirectory) {
