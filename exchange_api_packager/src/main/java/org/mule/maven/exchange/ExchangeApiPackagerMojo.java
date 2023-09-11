@@ -19,6 +19,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mule.maven.exchange.model.ExchangeModel;
 import org.mule.maven.exchange.model.ExchangeModelSerializer;
+import org.mule.maven.exchange.utils.ApiProjectConstants;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -59,6 +60,7 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().debug(String.format("filter hidden files: %b", filterOn));
         final File sourceDirectory = new File(project.getBuild().getSourceDirectory());
         final File buildDirectory = new File(project.getBuild().getDirectory());
         final File apiZip = new File(buildDirectory, getFileName());
@@ -89,11 +91,17 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
         return "fat-" + classifier;
     }
 
+    /**
+     * property to avoid packaging hidden and zipped files
+     */
+    @Parameter(property = ApiProjectConstants.MAVEN_FILTER_HIDDEN, defaultValue = "false")
+    private boolean filterOn;
+
     private void createZip(File sourceDir, FileFilter fileFilter, File zipFile) throws MojoExecutionException {
         try {
             try (FileOutputStream fileWriter = new FileOutputStream(zipFile);
                  ZipOutputStream zip = new ZipOutputStream(fileWriter)) {
-                addZipEntries(sourceDir, fileFilter, zip, null);
+                addZipEntries(sourceDir, fileFilter, zip, null, filterOn);
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Exception while generating zip file", e);
@@ -108,13 +116,15 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
         return classifier;
     }
 
-    private void addZipEntries(File sourceDir, FileFilter fileFilter, ZipOutputStream zip, String basePath) throws IOException {
+    private void addZipEntries(File sourceDir, FileFilter fileFilter, ZipOutputStream zip, String basePath, boolean filterOn) throws IOException {
         final File[] files = sourceDir.listFiles(fileFilter);
         if (files != null) {
             for (File file : files) {
+                if(filterOn && filteredFiles(file.getName()))
+                    continue; // avoid zipping hidden files or other zipped files
                 final String name = basePath != null ? basePath + "/" + file.getName() : file.getName();
                 if (file.isDirectory()) {
-                    addZipEntries(file, fileFilter, zip, name);
+                    addZipEntries(file, fileFilter, zip, name, filterOn);
                 } else {
                     // hack due to apikits issues while reading exchange.json file.
                     file = tamperFileIfExchangeJson(file);
@@ -130,6 +140,10 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private boolean filteredFiles(String entryName) {
+        return entryName.toLowerCase().endsWith(".zip") || entryName.startsWith(".");
     }
 
     /**
