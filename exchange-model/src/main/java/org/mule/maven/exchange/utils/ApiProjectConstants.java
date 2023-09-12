@@ -14,7 +14,7 @@ public class ApiProjectConstants {
 
     public static final String MAVEN_SKIP_REST_CONNECT = "exchange.maven.restConnect.skip";
     public static final String MAVEN_SKIP_VALIDATE_API = "exchange.maven.validateApi.skip";
-    public static final String MAVEN_FILTER_HIDDEN = "exchange.maven.filterHidden";
+    public static final String MAVEN_EXCLUDE_FILES = "exchange.maven.files.excludeProblematic";
     public static final String REST_CONNECT_OUTPUTDIR = "rest_connect_workdir";
 
     public static File getFatApiDirectory(File buildDirectory) {
