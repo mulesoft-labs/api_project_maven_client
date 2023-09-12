@@ -58,10 +58,10 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
     private String classifier;
 
     /**
-     * property to avoid packaging problematic (hidden) files
+     * property to avoid packaging hidden files
      */
     @Parameter(property = ApiProjectConstants.MAVEN_EXCLUDE_FILES, defaultValue = "false")
-    private boolean excludeProblematicFiles;
+    private boolean excludeHiddenFiles;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -99,7 +99,7 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
         try {
             try (FileOutputStream fileWriter = new FileOutputStream(zipFile);
                  ZipOutputStream zip = new ZipOutputStream(fileWriter)) {
-                addZipEntries(sourceDir, fileFilter, zip, null, excludeProblematicFiles);
+                addZipEntries(sourceDir, fileFilter, zip, null, excludeHiddenFiles);
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Exception while generating zip file", e);
@@ -114,17 +114,17 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
         return classifier;
     }
 
-    private void addZipEntries(File sourceDir, FileFilter fileFilter, ZipOutputStream zip, String basePath, boolean excludeProblematicFiles) throws IOException {
+    private void addZipEntries(File sourceDir, FileFilter fileFilter, ZipOutputStream zip, String basePath, boolean excludeHiddenFiles) throws IOException {
         final File[] files = sourceDir.listFiles(fileFilter);
         if (files != null) {
             for (File file : files) {
-                if (excludeProblematicFiles && isProblematicFile(file.getName())) {
-                    getLog().debug(String.format("excluded problematic file: `%s` from zip", file.getName()));
+                if (excludeHiddenFiles && isHiddenFile(file.getName())) {
+                    getLog().debug(String.format("excluded hidden file: `%s` from zip", file.getName()));
                     continue; // avoid zipping hidden files
                 }
                 final String name = basePath != null ? basePath + "/" + file.getName() : file.getName();
                 if (file.isDirectory()) {
-                    addZipEntries(file, fileFilter, zip, name, excludeProblematicFiles);
+                    addZipEntries(file, fileFilter, zip, name, excludeHiddenFiles);
                 } else {
                     // hack due to apikits issues while reading exchange.json file.
                     file = tamperFileIfExchangeJson(file);
@@ -142,7 +142,7 @@ public class ExchangeApiPackagerMojo extends AbstractMojo {
         }
     }
 
-    private boolean isProblematicFile(String entryName) {
+    private boolean isHiddenFile(String entryName) {
         return entryName.startsWith(".");
     }
 
