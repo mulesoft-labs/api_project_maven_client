@@ -310,9 +310,6 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setArtifactId(dep.getAssetId());
         result.setGroupId(dep.getGroupId());
         result.setVersion(dep.getVersion());
-        if (VALIDATION_SCOPE.equals(dep.getScope()))
-            result.setClassifier(FAT_RULESET); // set for legacy cases (scope but no classifier in dependency)
-        else result.setClassifier(RAML_FRAGMENT);
         setOrDefault(dep.getPackaging(), "zip", result::setType);
         setOrDefault(dep.getClassifier(), null, result::setClassifier);
         return result;
