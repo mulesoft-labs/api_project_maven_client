@@ -51,7 +51,7 @@ public class ExchangeModelProcessor implements ModelProcessor {
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
-    public static final String PACKAGER_VERSION = "2.5.0";
+    public static final String PACKAGER_VERSION = "2.5.1-SNAPSHOT";
 
     public static final String MAVEN_FACADE_SYSTEM_PROPERTY = "-Dexchange.maven.repository.url";
 
@@ -310,9 +310,6 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setArtifactId(dep.getAssetId());
         result.setGroupId(dep.getGroupId());
         result.setVersion(dep.getVersion());
-        if (VALIDATION_SCOPE.equals(dep.getScope()))
-            result.setClassifier(FAT_RULESET); // set for legacy cases (scope but no classifier in dependency)
-        else result.setClassifier(RAML_FRAGMENT);
         setOrDefault(dep.getPackaging(), "zip", result::setType);
         setOrDefault(dep.getClassifier(), null, result::setClassifier);
         return result;
