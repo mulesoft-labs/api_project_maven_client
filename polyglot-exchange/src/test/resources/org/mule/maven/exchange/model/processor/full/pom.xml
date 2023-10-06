@@ -19,7 +19,6 @@
             <artifactId>training-american-flights-example</artifactId>
             <version>1.0.1</version>
             <type>zip</type>
-            <classifier>raml-fragment</classifier>
         </dependency>
         <dependency>
             <groupId>68ef9520-24e9-4cf2-b2f5-620025690913</groupId>
@@ -33,7 +32,6 @@
             <artifactId>other-test</artifactId>
             <version>1.0.1</version>
             <type>zip</type>
-            <classifier>fat-ruleset</classifier>
         </dependency>
     </dependencies>
     <repositories>
