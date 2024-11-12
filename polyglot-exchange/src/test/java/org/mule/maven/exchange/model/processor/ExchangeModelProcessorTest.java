@@ -43,6 +43,9 @@ public class ExchangeModelProcessorTest {
             if (!testCase.getName().startsWith("groupId")) {
                 System.setProperty("groupId", "org.mule.test");
             }
+            if (testCase.getName().equals("light_ruleset")) {
+                System.setProperty("exchange.maven.dependencies.useLightRulesets", "true");
+            }
             final ExchangeModelProcessor exchangeModelProcessor = new ExchangeModelProcessor();
             final HashMap<String, Object> options = new HashMap<>();
             final File exchangeFile = getExchangeFile(testCase);
