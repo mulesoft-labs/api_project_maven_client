@@ -1,0 +1,46 @@
+{
+  "main": "american-flights-api123567.raml",
+  "name": "American Flights API",
+  "classifier": "raml",
+  "tags": [],
+  "dependencies": [
+    {
+      "groupId": "68ef9520-24e9-4cf2-b2f5-620025690913",
+      "assetId": "training-american-flight-data-type",
+      "version": "1.0.1",
+      "classifier": "oas-components",
+      "packaging": "zip"
+    },
+    {
+      "groupId": "68ef9520-24e9-4cf2-b2f5-620025690913",
+      "assetId": "training-american-flights-example",
+      "version": "1.0.1"
+    },
+    {
+      "groupId": "68ef9520-24e9-4cf2-b2f5-620025690913",
+      "assetId": "test",
+      "version": "1.0.1",
+      "scope": "validation",
+      "classifier": "ruleset",
+      "packaging": "zip"
+    },
+    {
+      "groupId": "68ef9520-24e9-4cf2-b2f5-620025690913",
+      "assetId": "other-test",
+      "version": "1.0.1",
+      "scope": "validation",
+      "classifier": "ruleset",
+      "packaging": "yaml"
+    }
+  ],
+  "groupId": "e391ca1a-41ef-49a4-88b3-ae1106af1867",
+  "descriptorVersion": "1.0.0",
+  "assetId": "american-flights-api",
+  "version": "1.0.0-SNAPSHOT",
+  "apiVersion": "v1",
+  "metadata": {
+    "projectId": "3fe3ce56-46da-4a8a-a863-3f79341414af",
+    "branchId": "master",
+    "commitId": "970bccf0a9c0f0980864f3342e336f853a034964"
+  }
+}

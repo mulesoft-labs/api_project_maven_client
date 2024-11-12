@@ -42,8 +42,9 @@ public class ExchangeModelProcessor implements ModelProcessor {
 
     public static final String ORG_ID_KEY = "orgId";
     public static final String RAML_FRAGMENT = "raml-fragment";
-    public static final String FAT_RULESET = "fat-ruleset";
-    public static final String VALIDATION_SCOPE = "validation";
+    public static final String RULESET = "ruleset";
+    public static final String ZIP_PACKAGING = "zip";
+    public static final String LIGHT_RULESET = "light-ruleset";
 
 
     private static Logger LOGGER = Logger.getLogger(ExchangeModelProcessor.class.getName());
@@ -51,11 +52,17 @@ public class ExchangeModelProcessor implements ModelProcessor {
     private static final String EXCHANGE_JSON = "exchange.json";
     private static final String TEMPORAL_EXCHANGE_XML = ".exchange.xml";
 
-    public static final String PACKAGER_VERSION = "2.5.1";
+    public static final String PACKAGER_VERSION = "2.5.2";
 
     public static final String MAVEN_FACADE_SYSTEM_PROPERTY = "-Dexchange.maven.repository.url";
 
     public static final String MAVEN_FACADE_V2_SYSTEM_PROPERTY = "-Dexchange.maven.v2.repository.url";
+
+    /**
+     * Enables transformation from 'ruleset' classifier with 'zip' type to 'light-ruleset' classifier.
+     * Workarounds compatibility issues when 'ruleset' classifier is only available for 'yaml' type. [W-17152780]
+     */
+    public static final String MAVEN_USE_LIGHT_RULESETS_PROPERTY = "exchange.maven.dependencies.useLightRulesets";
 
 
     private ExchangeModelSerializer objectMapper = new ExchangeModelSerializer();
@@ -310,9 +317,21 @@ public class ExchangeModelProcessor implements ModelProcessor {
         result.setArtifactId(dep.getAssetId());
         result.setGroupId(dep.getGroupId());
         result.setVersion(dep.getVersion());
-        setOrDefault(dep.getPackaging(), "zip", result::setType);
-        setOrDefault(dep.getClassifier(), null, result::setClassifier);
+        setOrDefault(dep.getPackaging(), ZIP_PACKAGING, result::setType);
+        setOrDefault(dep.getClassifier(), null, this.setDependencyClassifier(result, result.getType()));
         return result;
+    }
+
+    private Consumer<String> setDependencyClassifier(Dependency dependency, String packaging) {
+        return (String classifier) -> dependency.setClassifier(this.transformClassifier(classifier, packaging));
+    }
+
+    private String transformClassifier(String classifier, String packaging) {
+        if (useLightRulesetsEnabled() && classifier.equalsIgnoreCase(RULESET) && packaging.equalsIgnoreCase(ZIP_PACKAGING)) {
+            return LIGHT_RULESET;
+        }
+
+        return classifier;
     }
 
     private void setOrDefault(Object obj, String fallback, Consumer<String> fn) {
@@ -348,6 +367,10 @@ public class ExchangeModelProcessor implements ModelProcessor {
         repository.setUrl("https://repository-master.mulesoft.org/nexus/content/repositories/releases/");
         repository.setLayout("default");
         return repository;
+    }
+
+    private static boolean useLightRulesetsEnabled() {
+        return Boolean.parseBoolean(System.getProperty(MAVEN_USE_LIGHT_RULESETS_PROPERTY, "false"));
     }
 
 }
