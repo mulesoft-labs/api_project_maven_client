@@ -68,6 +68,7 @@ public class ExchangeModelProcessorTest {
             assertFalse("XML similar " + myDiff.toString(), myDiff.hasDifferences());
         } finally {
             System.clearProperty("groupId");
+            System.clearProperty("exchange.maven.dependencies.useLightRulesets");
         }
     }
 
