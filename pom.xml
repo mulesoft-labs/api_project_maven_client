@@ -66,7 +66,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 
         <!-- Plugins dependencies versions -->
-        <mulesoft-license.version>1.1.0</mulesoft-license.version>
+        <mulesoft-license.version>1.4.0</mulesoft-license.version>
 
         <!-- Mulesoft License properties -->
         <mulesoft-license.path>LICENSE_HEADER_80.txt</mulesoft-license.path>
